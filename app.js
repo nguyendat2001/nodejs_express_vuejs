@@ -5,7 +5,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.json({ message: "Wellcome to contract book appliation." });
-});
+// app.get('/', (req, res) => {
+//     res.json({ message: "Wellcome to contract book appliation." });
+// });
+
+const contactsRouter = require("./app/routes/contact.route");
+app.use("/api/contacts", contactsRouter);
 module.exports = app;
