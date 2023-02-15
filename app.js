@@ -10,7 +10,7 @@ app.use(express.json());
 // });
 
 const contactsRouter = require("./app/routes/contact.route");
-const ApiError = require("./api/api-error");
+const ApiError = require("./app/api-error");
 
 app.use("/api/contacts", contactsRouter);
 
@@ -18,7 +18,7 @@ app.use((req, res, next) => {
     return next(new ApiError(404, "resource not found"));
 });
 
-app.use((err, req, res, next) => {
+app.use((error, req, res, next) => {
     return res.status(error.statusCode || 500).json({
         message: error.message || "Internal Server Error",
     });
