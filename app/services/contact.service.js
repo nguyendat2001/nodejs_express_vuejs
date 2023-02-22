@@ -3,19 +3,19 @@ const { ObjectId } = require("mongodb");
 class ContactService {
     constructor(client) {
         this.Contact = client.db().collection("contacts");
-
     }
 
     extractConactData(payload) {
         const contact = {
-            name:       payload.name,
-            email:      payload.email,
-            address:    payload.address,
-            phone:      payload.phone,
-            favorite:   payload.favorite
+            name: payload.name,
+            email: payload.email,
+            address: payload.address,
+            phone: payload.phone,
+            favorite: payload.favorite,
+            mail_verify: payload.mail_verify,
         };
-
-        Objects.keys(contact).foreach(
+        // Remove undefined fields
+        Object.keys(contact).forEach(
             (key) => contact[key] === undefined && delete contact[key]
         );
         return contact;
@@ -25,7 +25,7 @@ class ContactService {
         const contact = this.extractConactData(payload);
         const result = await this.Contact.findOneAndUpdate(
             contact,
-            { $set: { favorite: contact.favorite === true } },
+            { $set: { favorite: contact.favorite === true, mail_verify: false } },
             { returnDocumnet: "after", upsert: true }
         );
         return result.value;
@@ -52,7 +52,7 @@ class ContactService {
         const filter = {
             _id: ObjectId.isValid(id) ? new ObjectId(id): null,
         };
-        const update = this.extractContactData(payload);
+        const update = this.extractConactData(payload);
         const result = await this.Contact.findOneAndUpdate(
             filter,
             { $set: update},
@@ -60,6 +60,7 @@ class ContactService {
         );
         return result.value;
     }
+
     async delete(id) {
         const result = await this.Contact.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
