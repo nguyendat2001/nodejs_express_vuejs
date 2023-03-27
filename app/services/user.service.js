@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb");
 
 class ContactService {
     constructor(client) {
-        this.Contact = client.db().collection("contacts");
+        this.Contact = client.db().collection("users");
     }
 
     extractConactData(payload) {
@@ -11,8 +11,9 @@ class ContactService {
             email: payload.email,
             address: payload.address,
             phone: payload.phone,
-            favorite: payload.favorite,
+            password: payload.password,
             mail_verify: payload.mail_verify,
+            role: payload.role,
         };
         // Remove undefined fields
         Object.keys(contact).forEach(
@@ -25,7 +26,7 @@ class ContactService {
         const contact = this.extractConactData(payload);
         const result = await this.Contact.findOneAndUpdate(
             contact,
-            { $set: { favorite: contact.favorite === true, mail_verify: false } },
+            { $set: { mail_verify: false, role: 0 } },
             { returnDocumnet: "after", upsert: true }
         );
         return result.value;
@@ -39,6 +40,12 @@ class ContactService {
     async findByName(name){
         return await this.find({
             name: {$regex:new RegExp(name), $options: "i"},
+        });
+    }
+
+    async findByMail(email){
+        return await this.Contact.findOne({
+            email: {$regex:new RegExp(email), $options: "i"},
         });
     }
 
@@ -68,8 +75,8 @@ class ContactService {
         return result.value;
     }
 
-    async findFavorite() {
-        return await this.find({ favorite: true });
+    async findMailVerified() {
+        return await this.find({ mail_verify: true });
     }
 
     async deleteAll() {

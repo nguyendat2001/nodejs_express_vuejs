@@ -1,8 +1,7 @@
 const express = require("express");
-const cors = require("cors");
 const app = express();
 
-app.use(cors());
+app.use(express.static('public')); //to access the files in public folder
 app.use(express.json());
 
 // app.get('/', (req, res) => {
@@ -10,9 +9,17 @@ app.use(express.json());
 // });
 
 const contactsRouter = require("./app/routes/contact.route");
+const userRouter = require("./app/routes/user.route");
+const productRouter = require("./app/routes/product.route");
+const cartRouter = require("./app/routes/cart.route");
+const orderRouter = require("./app/routes/order.route");
 const ApiError = require("./app/api-error");
 
+app.use("/api/orders", orderRouter);
 app.use("/api/contacts", contactsRouter);
+app.use("/api/users", userRouter);
+app.use("/api/products", productRouter);
+app.use("/api/carts/", cartRouter);
 
 app.use((req, res, next) => {
     return next(new ApiError(404, "resource not found"));
