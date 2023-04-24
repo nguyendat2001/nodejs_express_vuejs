@@ -68,6 +68,18 @@ class ContactService {
         return result.value;
     }
 
+    async createToken(id,token){
+        const filter = {
+            _id: ObjectId.isValid(id) ? new ObjectId(id): null,
+        };
+        const result = await this.Contact.findOneAndUpdate(
+            filter,
+            { $set: {refreshToken : token}},
+            { returnDocument: "after"}
+        );
+        return result.value;
+    }
+
     async delete(id) {
         const result = await this.Contact.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,

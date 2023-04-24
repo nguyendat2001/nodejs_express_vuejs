@@ -124,11 +124,24 @@ const deleteProduct = async (req, res, next) => {
     }
 };
 
+const deleteAllProduct = async (req, res, next) => {
+    try {
+        const cartService = new CartService(MongoDB.client);
+        const document = await cartService.deleteAllProduct(req.params.id);
+        return res.send(document);
+    } catch (error) {
+        return next(
+            new ApiError(500, "An error occurred while removing products")
+        );
+    }
+};
+
 module.exports = {
     create,
     findOne,
     update,
     Delete,
     deleteProduct,
-    findOneByUserId
+    findOneByUserId,
+    deleteAllProduct
 }

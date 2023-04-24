@@ -26,7 +26,7 @@ const create = async (req, res, next) => {
 
         if(!document_update.mail_verify){
 //            const mailToken = jwt.sign(mailData, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN })
-            const mailInfo = await sendMail(req.body.email, `${process.env.HOST}/verify/mail/${document._id}`);
+            const mailInfo = await sendMail(req.body.email, 'http://127.0.0.1:3001/verify/'+`${document._id}`);
             console.log({ success: true, message: "Account created. Please Verify your E-Mail Address and Phone Number" })
             res.send({ success: true, message: "Account created. Please Verify your E-Mail Address and Phone Number" });
         }
@@ -39,6 +39,7 @@ const create = async (req, res, next) => {
 
 const findAll = async (req, res, next) => {
     let document = []
+    console.log('abc');
     try {
         const userservice = new UserService(MongoDB.client);
         const {name} = req.query;
@@ -47,6 +48,7 @@ const findAll = async (req, res, next) => {
         }else {
             documents = await userservice.find({});
         }
+        console.log(documents);
     }catch(error){
         return next(
             new ApiError(500,"An error occurred while retrieving user services")
@@ -217,6 +219,8 @@ const unLockAcc = async (req, res, next) => {
         );
     }
 };
+
+
 
 module.exports = {
     create,

@@ -8,7 +8,6 @@ app.use(express.json());
 //     res.json({ message: "Wellcome to contract book appliation." });
 // });
 
-const contactsRouter = require("./app/routes/contact.route");
 const userRouter = require("./app/routes/user.route");
 const productRouter = require("./app/routes/product.route");
 const cartRouter = require("./app/routes/cart.route");
@@ -16,7 +15,6 @@ const orderRouter = require("./app/routes/order.route");
 const ApiError = require("./app/api-error");
 
 app.use("/api/orders", orderRouter);
-app.use("/api/contacts", contactsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts/", cartRouter);

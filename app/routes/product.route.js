@@ -4,6 +4,7 @@ const products = require("../controllers/product.controller");
 const multer = require("multer");
 const path = require("path");
 const bodyParser = require("body-parser");
+const auths = require("../auth/auth");
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -25,9 +26,9 @@ const upload = multer({storage:storage});
 
 
 router.route("/")
-    .get(products.findAll)
-    .post(upload.single('file'),products.create)
-    .delete(products.deleteAll);
+    .get(auths.verifyToken,auths.verifyAdmin,products.findAll)
+    .post(auths.verifyToken,auths.verifyAdmin,upload.single('file'),products.create)
+    .delete(auths.verifyToken,auths.verifyAdmin,products.deleteAll);
 
 router.route("/findallavailable")
     .get(products.findAllAvailable);
@@ -40,10 +41,10 @@ router.route("/findByBrand/:brand")
 
 router.route("/:id")
     .get(products.findOne)
-    .put(upload.single('file'),products.update)
-    .delete(products.Delete);
+    .put(auths.verifyToken,auths.verifyAdmin,upload.single('file'),products.update)
+    .delete(auths.verifyToken,auths.verifyAdmin,products.Delete);
 
-router.route("/unavailable/:id").get(products.unavailable);
-router.route("/available/:id").get(products.available);
+router.route("/unavailable/:id").get(auths.verifyToken,auths.verifyAdmin,products.unavailable);
+router.route("/available/:id").get(auths.verifyToken,auths.verifyAdmin,products.available);
 
 module.exports = router;

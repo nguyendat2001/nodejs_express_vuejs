@@ -34,6 +34,21 @@ const findOne = async (req, res, next) => {
     }
 };
 
+const findByUserId = async (req, res, next) => {
+    try {
+        const orderService = new OrderService(MongoDB.client);
+        const document = await orderService.findByUserId(req.params.id);
+        if (!document){
+            return next(new ApiError(404, "product not found"));
+        }
+        return res.send(document);
+    }catch(error){
+        return next(
+            new ApiError(500,`Error retrieving contact with id=${req.params.id}`)
+        );
+    }
+};
+
 const findAll = async (req, res, next) => {
     let document = []
     try {
@@ -102,6 +117,23 @@ const Delete = async (req, res, next) => {
     }
 };
 
+const getTopSale = async (req, res, next) => {
+    try {
+        const orderService = new OrderService(MongoDB.client);
+        const document = await orderService.getTopSale();
+        if (!document) {
+            return next(new ApiError(404, "not found"));
+        }
+        return res.send(document);
+    } catch (error) {
+        return next(
+            new ApiError(
+                500,
+                'error with data'
+            )
+        );
+    }
+};
 
 module.exports = {
     create,
@@ -109,5 +141,7 @@ module.exports = {
     update,
     Delete,
     ApproveId,
-    findAll
+    findAll,
+    findByUserId,
+    getTopSale
 }

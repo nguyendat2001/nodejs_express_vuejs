@@ -24,7 +24,7 @@ class OrderService {
             total_cost: payload.total_cost,
             date_time: dateTime,
             destination: payload.destination,
-            status: payload.status,
+            status: false,
         };
         // Remove undefined fields
         Object.keys(order).forEach(
@@ -44,10 +44,16 @@ class OrderService {
 //        let seconds = date_ob.getSeconds();
 //        const date_time = (year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
         const result = await this.Order.insertOne(
-            order,
-            { $set: { status: false } }
+            order
         );
         return result.value;
+    }
+
+    async findByUserId(userid){
+        const cursor = await this.Order.find({
+                             "user_id": userid
+                         });
+        return await cursor.toArray();
     }
 
     async find(filter){
@@ -95,6 +101,41 @@ class OrderService {
 
     async findUnApprove() {
         return await this.find({ status: false });
+    }
+
+    async getTopSale(){
+        const tmp = await this.Order.aggregate([
+            {$unwind : '$product_list'},
+        ]).toArray();
+//        console.log(tmp);
+        const data_product = await this.Product.find({}).toArray();
+        const data = [];
+
+
+        for (let i = 0; i < data_product.length; i++){
+            var price = data_product[i].price;
+            var product_id = data_product[i]._id.toString();
+            var product_name = data_product[i].name;
+            var number = 0;
+            console.log(product_id);
+            for (let j = 0; j < tmp.length; j++){
+                if(data_product[i]._id.toString() == tmp[j].product_list.product_id ){
+                    number += tmp[j].product_list.number;
+                }
+            }
+            const figure = {
+                "product_id" :  product_id,
+                'product_name': product_name,
+                "price" :  price,
+                "image" :  data_product[i].image,
+                "number" :  number,
+            };
+            console.log(figure);
+            data.push(figure);
+            console.log(data)
+        }
+        console.log(data);
+        return data;
     }
 }
 module.exports = OrderService;

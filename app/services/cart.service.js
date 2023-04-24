@@ -74,7 +74,7 @@ class CartService {
     }
 
     async findByUserId(userid){
-        console.log(userid)
+//        console.log(userid)
         const result = await this.Cart.findOne({
                              "account_id": userid
                          });
@@ -96,6 +96,17 @@ class CartService {
     async delete(id) {
         const result = await this.Cart.findOneAndDelete({
             _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
+        });
+        return result.value;
+    }
+
+    async deleteAllProduct(user_id){
+        const result = await this.Cart.updateOne(
+              { "account_id": user_id },
+              {
+              $set: {
+                  product_list: []
+              }
         });
         return result.value;
     }

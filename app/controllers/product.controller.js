@@ -22,11 +22,12 @@ const create = async (req, res, next) => {
         }
         console.log(data)
         const document = await productService.create(data);
-        console.log(document)
-        if(document){
-            console.log({ success: true, product: document })
-            res.send({ success: true, product: document });
-        }
+        res.send({ success: true});
+//        console.log(document)
+//        if(document){
+//            console.log({ success: true, product: document })
+//            res.send({ success: true, product: document });
+//        }
     } catch (error) {
         return next(
             new ApiError(500, "An error occurred while creating the product")
@@ -56,7 +57,7 @@ const findByPlace = async (req, res, next) => {
     let document = []
     try {
         const productService = new ProductService(MongoDB.client);
-        documents = await productService.find({"manufacture":req.params.manufacture});
+        documents = await productService.find({"manufacture":req.params.manufacture, "available": true});
     }catch(error){
         return next(
             new ApiError(500,"An error occurred while retrieving products")
